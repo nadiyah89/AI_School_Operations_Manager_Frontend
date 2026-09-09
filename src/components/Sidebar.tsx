@@ -47,13 +47,91 @@ export default function Sidebar() {
   Parents
 </NavLink>
 
-      <p>Academics</p>
+      <p className={styles.sectionTitle}>Academics</p>
 
-      <p>Operations</p>
+      <NavLink
+  to="/academics/performance"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  Academic Performance
+</NavLink>
 
-      <p>Administration</p>
 
-      <p>AI</p>
+      <p className={styles.sectionTitle}>Operations</p>
+
+
+<NavLink
+  to="/operations/attendance"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  Attendance
+</NavLink>
+
+<NavLink
+  to="/operations/meetings"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  Meetings
+</NavLink>
+
+<NavLink
+  to="/operations/documents"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  Documents
+</NavLink>
+
+<NavLink
+  to="/operations/notifications"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  Notifications
+</NavLink>
+
+
+      <p className={styles.sectionTitle}>Administration</p>
+
+      <NavLink
+  to="/administration/admissions"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  Admissions
+</NavLink>
+
+
+<NavLink
+  to="/administration/fees"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  Fee Records
+</NavLink>
+
+      <p className={styles.sectionTitle}>AI</p>
+
+  <NavLink
+  to="/ai"
+  className={({ isActive }) =>
+    isActive ? styles.navItemActive : styles.navItem
+  }
+>
+  AI Assistant
+</NavLink>
+
+
 
       </nav>
 

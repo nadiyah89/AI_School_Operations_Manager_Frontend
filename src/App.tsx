@@ -6,6 +6,14 @@ import AppLayout from "./layouts/AppLayout";
 import StudentsPage from "./pages/StudentsPage";
 import TeachersPage from "./pages/TeachersPage";
 import ParentsPage from "./pages/ParentsPage";
+import AcademicPerformancePage from "./pages/AcademicPerformancePage";
+import AttendancePage from "./pages/AttendancePage";
+import MeetingsPage from "./pages/MeetingsPage";
+import DocumentsPage from "./pages/DocumentsPage";
+import NotificationsPage from "./pages/NotificationsPage";
+import AdmissionsPage from "./pages/AdmissionsPage";
+import FeesPage from "./pages/FeesPage";
+import AIAssistantPage from "./pages/AIAssistantPage";
 
 function App() {
   return (
@@ -29,6 +37,48 @@ function App() {
              path="/directory/parents"
              element={<ParentsPage />}
              />
+
+             <Route
+              path="/academics/performance"
+             element={<AcademicPerformancePage />}
+             />
+
+             <Route
+              path="/operations/attendance"
+              element={<AttendancePage />}
+             />
+
+             <Route
+               path="/operations/meetings"
+                element={<MeetingsPage />}
+              />
+
+              <Route
+               path="/operations/documents"
+               element={<DocumentsPage />}
+               />
+               
+               <Route
+               path="/operations/notifications"
+               element={<NotificationsPage />}
+                />
+
+              <Route
+                  path="/administration/admissions"
+                  element={<AdmissionsPage />}
+                />
+
+                <Route
+                path="/administration/fees"
+                  element={<FeesPage />}
+                 />
+
+                 <Route
+                  path="/ai"
+                 element={<AIAssistantPage />}
+                 />
+
+
          </Route>
        </Route>
 
