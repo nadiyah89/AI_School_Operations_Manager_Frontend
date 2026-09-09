@@ -1,0 +1,49 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 64px);
+  padding: 24px 16px;
+  background: #0f2a63;
+  color: #ffffff;
+}
+
+.brand {
+  padding: 0 8px 24px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.account {
+  margin-top: auto;
+  padding: 16px 8px 0;
+}
+
+.navItem,
+.navItemActive {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.navItemActive {
+  background: #2563eb;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sectionTitle {
+  margin: 20px 8px 8px;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
