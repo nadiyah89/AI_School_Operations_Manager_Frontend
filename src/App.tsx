@@ -14,6 +14,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import AdmissionsPage from "./pages/AdmissionsPage";
 import FeesPage from "./pages/FeesPage";
 import AIAssistantPage from "./pages/AIAssistantPage";
+import StudentDetailsPage from "./pages/StudentDetailsPage";
 
 function App() {
   return (
@@ -28,6 +29,13 @@ function App() {
              path="/directory/students"
              element={<StudentsPage />}
              />
+
+             <Route
+              path="/directory/students/:id"
+              element={<StudentDetailsPage />}
+             />
+
+
              <Route
              path="/directory/teachers"
              element={<TeachersPage />}
