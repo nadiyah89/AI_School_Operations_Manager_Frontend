@@ -7,97 +7,114 @@ import {
 import type { Student } from "../types/student";
 import styles from "./StudentsPage.module.css";
 
-
 export default function StudentsPage() {
-const [students, setStudents] = useState<Student[]>([]);
-const [search, setSearch] = useState("");
-const [includeInactive, setIncludeInactive] = useState(false);
-const [isLoading, setIsLoading] = useState(true);
-const [error, setError] = useState("");
+  const [students, setStudents] = useState<Student[]>([]);
+  const [search, setSearch] = useState("");
+  const [includeInactive, setIncludeInactive] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
-const [showCreateForm, setShowCreateForm] = useState(false);
-const [firstName, setFirstName] = useState("");
-const [lastName, setLastName] = useState("");
-const [dateOfBirth, setDateOfBirth] = useState("");
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
+  const [createError, setCreateError] = useState("");
 
-const [isCreating, setIsCreating] = useState(false);
-const [createError, setCreateError] = useState("");
+  useEffect(() => {
+    let isCurrentRequest = true;
 
-useEffect(() => {
-  let isCurrentRequest = true;
+    const timer = setTimeout(async () => {
+      try {
+        setIsLoading(true);
+        setError("");
 
-  const timer = setTimeout(async () => {
+        const data = await getStudents(
+          includeInactive,
+          search
+        );
+
+        if (isCurrentRequest) {
+          setStudents(data);
+        }
+      } catch {
+        if (isCurrentRequest) {
+          setError("Failed to load students.");
+        }
+      } finally {
+        if (isCurrentRequest) {
+          setIsLoading(false);
+        }
+      }
+    }, 300);
+
+    return () => {
+      isCurrentRequest = false;
+      clearTimeout(timer);
+    };
+  }, [search, includeInactive]);
+
+  async function handleCreateStudent(
+    event: React.FormEvent<HTMLFormElement>
+  ) {
+    event.preventDefault();
+
     try {
-      setIsLoading(true);
-      setError("");
+      setIsCreating(true);
+      setCreateError("");
 
-      const data = await getStudents(includeInactive, search);
+      await createStudent({
+        firstName,
+        lastName,
+        dateOfBirth,
+      });
 
-      if (isCurrentRequest) {
-        setStudents(data);
-      }
+      const updatedStudents = await getStudents(
+        includeInactive,
+        search
+      );
+
+      setStudents(updatedStudents);
+
+      setFirstName("");
+      setLastName("");
+      setDateOfBirth("");
+      setShowCreateForm(false);
     } catch {
-      if (isCurrentRequest) {
-        setError("Failed to load students.");
-      }
+      setCreateError("Failed to create student.");
     } finally {
-      if (isCurrentRequest) {
-        setIsLoading(false);
-      }
+      setIsCreating(false);
     }
-  }, 300);
-
-  return () => {
-    isCurrentRequest = false;
-    clearTimeout(timer);
-  };
-}, [search, includeInactive]);
-
-async function handleCreateStudent(
-  event: React.FormEvent<HTMLFormElement>
-) {
-  event.preventDefault();
-
-  try {
-    setIsCreating(true);
-    setCreateError("");
-
-   await createStudent({
-  firstName,
-  lastName,
-  dateOfBirth,
-});
-
-const updatedStudents = await getStudents(
-  includeInactive,
-  search
-);
-
-setStudents(updatedStudents);
-
-setFirstName("");
-setLastName("");
-setDateOfBirth("");
-setShowCreateForm(false);
-
-  } catch {
-    setCreateError("Failed to create student.");
-  } finally {
-    setIsCreating(false);
   }
-}
+
+  function closeCreateForm() {
+    if (isCreating) return;
+
+    setShowCreateForm(false);
+    setCreateError("");
+  }
 
   if (error) {
     return (
       <main className={styles.page}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Students</h1>
-          <p className={styles.subtitle}>
-            Manage and view student records.
-          </p>
+          <div>
+            <h1 className={styles.title}>Students</h1>
+            <p className={styles.subtitle}>
+              Manage and view student records.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className={styles.addButton}
+            onClick={() => setShowCreateForm(true)}
+          >
+            Add Student
+          </button>
         </header>
 
-        <p>{error}</p>
+        <p className={styles.error}>{error}</p>
       </main>
     );
   }
@@ -105,155 +122,220 @@ setShowCreateForm(false);
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-  <h1 className={styles.title}>Students</h1>
-  <p className={styles.subtitle}>
-    Manage and view student records.
-  </p>
-</header>
-
-<div className={styles.toolbar}>
-  <div className={styles.searchContainer}>
-    <input
-      className={styles.searchInput}
-      type="search"
-      placeholder="Search students..."
-      value={search}
-      onChange={(event) => setSearch(event.target.value)}
-    />
-  </div>
-
-  <div className={styles.filterGroup}>
-    <button
-      type="button"
-      className={
-        !includeInactive
-          ? styles.filterButtonActive
-          : styles.filterButton
-      }
-      onClick={() => setIncludeInactive(false)}
-    >
-      Active Students
-    </button>
-
-    <button
-      type="button"
-      className={
-        includeInactive
-          ? styles.filterButtonActive
-          : styles.filterButton
-      }
-      onClick={() => setIncludeInactive(true)}
-    >
-      All Students
-    </button>
-  </div>
-
-<button
-  type="button"
-  onClick={() => setShowCreateForm(!showCreateForm)}
->
-  {showCreateForm ? "Cancel" : "Add Student"}
-</button>
-
-</div>
-
-{showCreateForm && (
-  
-    <form
-  className={styles.formCard}
-  onSubmit={handleCreateStudent}
->
-    <h2 className={styles.formTitle}>Add Student</h2>
-
-    {createError && <p>{createError}</p>}
-
-    <div className={styles.formGrid}>
-      <div className={styles.formField}>
-        <label htmlFor="firstName">First Name</label>
-        <input
-          id="firstName"
-          type="text"
-          value={firstName}
-          onChange={(event) => setFirstName(event.target.value)}
-        />
-      </div>
-
-      <div className={styles.formField}>
-        <label htmlFor="lastName">Last Name</label>
-        <input
-          id="lastName"
-          type="text"
-          value={lastName}
-          onChange={(event) => setLastName(event.target.value)}
-        />
-      </div>
-
-      <div className={styles.formField}>
-        <label htmlFor="dateOfBirth">Date of Birth</label>
-        <input
-          id="dateOfBirth"
-          type="date"
-          value={dateOfBirth}
-          onChange={(event) => setDateOfBirth(event.target.value)}
-        />
-      </div>
-    </div>
-
-    <button type="submit" disabled={isCreating}>
-  {isCreating ? "Creating..." : "Create Student"}
-</button>
-
-  </form>
-)}
-
-{isLoading && <p>Loading students...</p>}
-
-      {students.length === 0 ? (
-        <div className={styles.emptyState}>
-          No students found.
+        <div>
+          <h1 className={styles.title}>Students</h1>
+          <p className={styles.subtitle}>
+            Manage and view student records.
+          </p>
         </div>
-      ) : (
+
+        <button
+          type="button"
+          className={styles.addButton}
+          onClick={() => setShowCreateForm(true)}
+        >
+          Add Student
+        </button>
+      </header>
+
+      {showCreateForm && (
+        <div className={styles.formCard}>
+          <div className={styles.formHeader}>
+            <div>
+              <h2>Add Student</h2>
+              <p>Enter the student's information.</p>
+            </div>
+
+            <button
+              type="button"
+              className={styles.closeButton}
+              onClick={closeCreateForm}
+              disabled={isCreating}
+            >
+              Cancel
+            </button>
+          </div>
+
+          <form onSubmit={handleCreateStudent}>
+            <div className={styles.formGrid}>
+              <div className={styles.formField}>
+                <label htmlFor="firstName">
+                  First Name
+                </label>
+
+                <input
+                  id="firstName"
+                  type="text"
+                  value={firstName}
+                  onChange={(event) =>
+                    setFirstName(event.target.value)
+                  }
+                />
+              </div>
+
+              <div className={styles.formField}>
+                <label htmlFor="lastName">
+                  Last Name
+                </label>
+
+                <input
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(event) =>
+                    setLastName(event.target.value)
+                  }
+                />
+              </div>
+
+              <div className={styles.formField}>
+                <label htmlFor="dateOfBirth">
+                  Date of Birth
+                </label>
+
+                <input
+                  id="dateOfBirth"
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(event) =>
+                    setDateOfBirth(event.target.value)
+                  }
+                />
+              </div>
+            </div>
+
+            {createError && (
+              <p className={styles.error}>{createError}</p>
+            )}
+
+            <div className={styles.formActions}>
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={closeCreateForm}
+                disabled={isCreating}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className={styles.saveButton}
+                disabled={isCreating}
+              >
+                {isCreating
+                  ? "Creating..."
+                  : "Create Student"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className={styles.toolbar}>
+        <div className={styles.searchContainer}>
+          <input
+            className={styles.searchInput}
+            type="search"
+            placeholder="Search students..."
+            value={search}
+            onChange={(event) =>
+              setSearch(event.target.value)
+            }
+          />
+        </div>
+
+        <div className={styles.filters}>
+          <button
+            type="button"
+            className={
+              !includeInactive
+                ? styles.activeFilter
+                : styles.filterButton
+            }
+            onClick={() => setIncludeInactive(false)}
+          >
+            Active Students
+          </button>
+
+          <button
+            type="button"
+            className={
+              includeInactive
+                ? styles.activeFilter
+                : styles.filterButton
+            }
+            onClick={() => setIncludeInactive(true)}
+          >
+            All Students
+          </button>
+        </div>
+      </div>
+
+      {isLoading && (
+        <p className={styles.loading}>
+          Loading students...
+        </p>
+      )}
+
+      {!isLoading && students.length === 0 && (
+        <p className={styles.empty}>
+          No students found.
+        </p>
+      )}
+
+      {!isLoading && students.length > 0 && (
         <div className={styles.tableCard}>
           <table className={styles.table}>
             <thead>
-  <tr>
-    <th>ID</th>
-    <th>First Name</th>
-    <th>Last Name</th>
-    <th>Date of Birth</th>
-    <th>Status</th>
-    <th>Actions</th>
-  </tr>
-</thead>
+              <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Date of Birth</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
 
             <tbody>
               {students.map((student) => (
                 <tr key={student.id}>
-  <td>{student.id}</td>
+                  <td>{student.id}</td>
 
-  <td>{student.firstName}</td>
+                  <td>{student.firstName}</td>
 
-  <td>{student.lastName}</td>
+                  <td>{student.lastName}</td>
 
-  <td>
-    {new Date(student.dateOfBirth).toLocaleDateString()}
-  </td>
+                  <td>
+                    {new Date(
+                      student.dateOfBirth
+                    ).toLocaleDateString()}
+                  </td>
 
-  <td>
-    <span className={styles.status}>
-      {student.isActive ? "Active" : "Inactive"}
-    </span>
-  </td>
+                  <td>
+                    <span
+                      className={
+                        student.isActive
+                          ? styles.activeStatus
+                          : styles.inactiveStatus
+                      }
+                    >
+                      {student.isActive
+                        ? "Active"
+                        : "Inactive"}
+                    </span>
+                  </td>
 
-  <td>
-    <Link
-      to={`/directory/students/${student.id}`}
-      className={styles.viewButton}
-    >
-      View
-    </Link>
-  </td>
-</tr>
+                  <td>
+                    <Link
+                      to={`/directory/students/${student.id}`}
+                      className={styles.viewButton}
+                    >
+                      View
+                    </Link>
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>

@@ -15,6 +15,8 @@ import AdmissionsPage from "./pages/AdmissionsPage";
 import FeesPage from "./pages/FeesPage";
 import AIAssistantPage from "./pages/AIAssistantPage";
 import StudentDetailsPage from "./pages/StudentDetailsPage";
+import TeacherDetailsPage from "./pages/TeacherDetailsPage";
+import ParentDetailsPage from "./pages/ParentDetailsPage";
 
 function App() {
   return (
@@ -86,6 +88,20 @@ function App() {
                  element={<AIAssistantPage />}
                  />
 
+                 <Route
+                  path="/directory/teachers"
+                  element={<TeachersPage />}
+                 />
+
+                 <Route
+                  path="/directory/teachers/:id"
+                  element={<TeacherDetailsPage />}
+                  />
+
+                  <Route
+                  path="/directory/parents/:id"
+                  element={<ParentDetailsPage />}
+                  />
 
          </Route>
        </Route>
