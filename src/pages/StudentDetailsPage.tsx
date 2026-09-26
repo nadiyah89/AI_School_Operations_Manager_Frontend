@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   getStudentById,
   updateStudent,
@@ -17,9 +17,11 @@ export default function StudentDetailsPage() {
   const [error, setError] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+
   const [isUpdating, setIsUpdating] = useState(false);
   const [updateError, setUpdateError] = useState("");
 
@@ -41,6 +43,13 @@ export default function StudentDetailsPage() {
         const data = await getStudentById(Number(id));
 
         setStudent(data);
+
+        setFirstName(data.firstName);
+        setLastName(data.lastName);
+
+        setDateOfBirth(
+          new Date(data.dateOfBirth).toISOString().split("T")[0]
+        );
       } catch {
         setError("Failed to load student.");
       } finally {
@@ -50,6 +59,35 @@ export default function StudentDetailsPage() {
 
     loadStudent();
   }, [id]);
+
+  function handleEdit() {
+    if (!student) {
+      return;
+    }
+
+    setFirstName(student.firstName);
+    setLastName(student.lastName);
+    setDateOfBirth(
+      new Date(student.dateOfBirth).toISOString().split("T")[0]
+    );
+
+    setUpdateError("");
+    setStatusError("");
+    setIsEditing(true);
+  }
+
+  function handleCancelEdit() {
+    if (student) {
+      setFirstName(student.firstName);
+      setLastName(student.lastName);
+      setDateOfBirth(
+        new Date(student.dateOfBirth).toISOString().split("T")[0]
+      );
+    }
+
+    setUpdateError("");
+    setIsEditing(false);
+  }
 
   async function handleUpdateStudent(
     event: React.FormEvent<HTMLFormElement>
@@ -79,7 +117,7 @@ export default function StudentDetailsPage() {
     }
   }
 
-  async function handleToggleStatus() {
+  async function handleDeactivate() {
     if (!student) {
       return;
     }
@@ -88,17 +126,30 @@ export default function StudentDetailsPage() {
       setIsTogglingStatus(true);
       setStatusError("");
 
-      const updatedStudent = student.isActive
-        ? await deactivateStudent(student.id)
-        : await activateStudent(student.id);
+      const updatedStudent = await deactivateStudent(student.id);
 
       setStudent(updatedStudent);
     } catch {
-      setStatusError(
-        student.isActive
-          ? "Failed to deactivate student."
-          : "Failed to activate student."
-      );
+      setStatusError("Failed to deactivate student.");
+    } finally {
+      setIsTogglingStatus(false);
+    }
+  }
+
+  async function handleActivate() {
+    if (!student) {
+      return;
+    }
+
+    try {
+      setIsTogglingStatus(true);
+      setStatusError("");
+
+      const updatedStudent = await activateStudent(student.id);
+
+      setStudent(updatedStudent);
+    } catch {
+      setStatusError("Failed to activate student.");
     } finally {
       setIsTogglingStatus(false);
     }
@@ -108,43 +159,41 @@ export default function StudentDetailsPage() {
     return (
       <main className={styles.page}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Student Details</h1>
-          <p className={styles.subtitle}>
-            View student information.
-          </p>
+          <div>
+            <h1 className={styles.title}>Student Details</h1>
+            <p className={styles.subtitle}>
+              View student information.
+            </p>
+          </div>
         </header>
 
-        <p>Loading student...</p>
+        <p className={styles.loading}>Loading student details...</p>
       </main>
     );
   }
 
-  if (error) {
+  if (error || !student) {
     return (
       <main className={styles.page}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Student Details</h1>
-          <p className={styles.subtitle}>
-            View student information.
-          </p>
+          <div>
+            <h1 className={styles.title}>Student Details</h1>
+            <p className={styles.subtitle}>
+              View student information.
+            </p>
+          </div>
         </header>
 
-        <p className={styles.error}>{error}</p>
-      </main>
-    );
-  }
+        <p className={styles.error}>
+          {error || "Student not found."}
+        </p>
 
-  if (!student) {
-    return (
-      <main className={styles.page}>
-        <header className={styles.header}>
-          <h1 className={styles.title}>Student Details</h1>
-          <p className={styles.subtitle}>
-            View student information.
-          </p>
-        </header>
-
-        <p>Student not found.</p>
+        <Link
+          to="/directory/students"
+          className={styles.backLink}
+        >
+          ← Back to Students
+        </Link>
       </main>
     );
   }
@@ -153,140 +202,175 @@ export default function StudentDetailsPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Student Details</h1>
+          <h1 className={styles.title}>
+            {student.firstName} {student.lastName}
+          </h1>
+
           <p className={styles.subtitle}>
-            View student information.
+            Student details and record management.
           </p>
         </div>
 
         {!isEditing && (
-          <button
-            type="button"
-            onClick={() => {
-              setFirstName(student.firstName);
-              setLastName(student.lastName);
-              setDateOfBirth(
-                student.dateOfBirth.slice(0, 10)
-              );
-              setUpdateError("");
-              setIsEditing(true);
-            }}
-          >
-            Edit Student
-          </button>
+          <div className={styles.headerActions}>
+            <button
+              type="button"
+              className={styles.editButton}
+              onClick={handleEdit}
+              disabled={isTogglingStatus}
+            >
+              Edit Student
+            </button>
+
+            {student.isActive ? (
+              <button
+                type="button"
+                className={styles.deactivateButton}
+                onClick={handleDeactivate}
+                disabled={isTogglingStatus}
+              >
+                {isTogglingStatus
+                  ? "Deactivating..."
+                  : "Deactivate Student"}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.activateButton}
+                onClick={handleActivate}
+                disabled={isTogglingStatus}
+              >
+                {isTogglingStatus
+                  ? "Activating..."
+                  : "Activate Student"}
+              </button>
+            )}
+          </div>
         )}
       </header>
 
+      {statusError && (
+        <p className={styles.error}>{statusError}</p>
+      )}
+
       {isEditing ? (
-        <form
-          className={styles.card}
-          onSubmit={handleUpdateStudent}
-        >
+        <section className={styles.card}>
           <h2>Edit Student</h2>
 
-          {updateError && (
-            <p className={styles.error}>{updateError}</p>
-          )}
+          <form onSubmit={handleUpdateStudent}>
+            <div className={styles.detailsGrid}>
+              <div className={styles.formField}>
+                <label htmlFor="firstName">
+                  First Name
+                </label>
 
-          <div className={styles.detailsGrid}>
-            <div className={styles.detail}>
-              <label
-                className={styles.label}
-                htmlFor="firstName"
-              >
-                First Name
-              </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  value={firstName}
+                  onChange={(event) =>
+                    setFirstName(event.target.value)
+                  }
+                  required
+                />
+              </div>
 
-              <input
-                id="firstName"
-                type="text"
-                value={firstName}
-                onChange={(event) =>
-                  setFirstName(event.target.value)
-                }
-                required
-              />
+              <div className={styles.formField}>
+                <label htmlFor="lastName">
+                  Last Name
+                </label>
+
+                <input
+                  id="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(event) =>
+                    setLastName(event.target.value)
+                  }
+                  required
+                />
+              </div>
+
+              <div className={styles.formField}>
+                <label htmlFor="dateOfBirth">
+                  Date of Birth
+                </label>
+
+                <input
+                  id="dateOfBirth"
+                  type="date"
+                  value={dateOfBirth}
+                  onChange={(event) =>
+                    setDateOfBirth(event.target.value)
+                  }
+                  required
+                />
+              </div>
             </div>
 
-            <div className={styles.detail}>
-              <label
-                className={styles.label}
-                htmlFor="lastName"
+            {updateError && (
+              <p className={styles.formError}>
+                {updateError}
+              </p>
+            )}
+
+            <div className={styles.formActions}>
+              <button
+                type="button"
+                className={styles.secondaryButton}
+                onClick={handleCancelEdit}
+                disabled={isUpdating}
               >
-                Last Name
-              </label>
+                Cancel
+              </button>
 
-              <input
-                id="lastName"
-                type="text"
-                value={lastName}
-                onChange={(event) =>
-                  setLastName(event.target.value)
-                }
-                required
-              />
-            </div>
-
-            <div className={styles.detail}>
-              <label
-                className={styles.label}
-                htmlFor="dateOfBirth"
+              <button
+                type="submit"
+                className={styles.saveButton}
+                disabled={isUpdating}
               >
-                Date of Birth
-              </label>
-
-              <input
-                id="dateOfBirth"
-                type="date"
-                value={dateOfBirth}
-                onChange={(event) =>
-                  setDateOfBirth(event.target.value)
-                }
-                required
-              />
+                {isUpdating
+                  ? "Saving..."
+                  : "Save Changes"}
+              </button>
             </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={isUpdating}
-            >
-              {isUpdating ? "Saving..." : "Save Changes"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                setIsEditing(false);
-                setUpdateError("");
-              }}
-              disabled={isUpdating}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+          </form>
+        </section>
       ) : (
         <section className={styles.card}>
           <div className={styles.detailsGrid}>
             <div className={styles.detail}>
-              <span className={styles.label}>ID</span>
+              <span className={styles.label}>
+                ID
+              </span>
+
               <span className={styles.value}>
                 {student.id}
               </span>
             </div>
 
             <div className={styles.detail}>
-              <span className={styles.label}>Status</span>
+              <span className={styles.label}>
+                Status
+              </span>
 
-              <span className={styles.status}>
-                {student.isActive ? "Active" : "Inactive"}
+              <span
+                className={
+                  student.isActive
+                    ? styles.activeStatus
+                    : styles.inactiveStatus
+                }
+              >
+                {student.isActive
+                  ? "Active"
+                  : "Inactive"}
               </span>
             </div>
 
             <div className={styles.detail}>
-              <span className={styles.label}>First Name</span>
+              <span className={styles.label}>
+                First Name
+              </span>
 
               <span className={styles.value}>
                 {student.firstName}
@@ -294,7 +378,9 @@ export default function StudentDetailsPage() {
             </div>
 
             <div className={styles.detail}>
-              <span className={styles.label}>Last Name</span>
+              <span className={styles.label}>
+                Last Name
+              </span>
 
               <span className={styles.value}>
                 {student.lastName}
@@ -313,26 +399,15 @@ export default function StudentDetailsPage() {
               </span>
             </div>
           </div>
-
-          {statusError && (
-            <p className={styles.error}>{statusError}</p>
-          )}
-
-          <div>
-            <button
-              type="button"
-              onClick={handleToggleStatus}
-              disabled={isTogglingStatus}
-            >
-              {isTogglingStatus
-                ? "Updating..."
-                : student.isActive
-                  ? "Deactivate Student"
-                  : "Activate Student"}
-            </button>
-          </div>
         </section>
       )}
+
+      <Link
+        to="/directory/students"
+        className={styles.backLink}
+      >
+        ← Back to Students
+      </Link>
     </main>
   );
 }

@@ -68,6 +68,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .label {
@@ -80,34 +81,32 @@
   color: #101828;
   font-size: 16px;
   font-weight: 500;
+  word-break: break-word;
 }
 
 /* =========================
    Status Badges
    ========================= */
 
-.activeStatus {
-  display: inline-flex;
-  align-items: center;
-  width: fit-content;
-  padding: 4px 9px;
-  border-radius: 999px;
-  background: #ecfdf3;
-  color: #027a48;
-  font-size: 12px;
-  font-weight: 600;
-}
-
+.activeStatus,
 .inactiveStatus {
   display: inline-flex;
   align-items: center;
   width: fit-content;
   padding: 4px 9px;
   border-radius: 999px;
-  background: #fef3f2;
-  color: #b42318;
   font-size: 12px;
   font-weight: 600;
+}
+
+.activeStatus {
+  background: #ecfdf3;
+  color: #027a48;
+}
+
+.inactiveStatus {
+  background: #fef3f2;
+  color: #b42318;
 }
 
 /* =========================
@@ -118,6 +117,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: 0;
 }
 
 .formField label {
@@ -145,6 +145,12 @@
 .formField input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.formField input:disabled {
+  background: #f8fafc;
+  color: #667085;
+  cursor: not-allowed;
 }
 
 /* =========================
@@ -311,30 +317,25 @@
    Back Navigation
    ========================= */
 
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 20px;
-  color: #2563eb;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.backLink:hover {
-  text-decoration: underline;
-}
-
+.backLink,
 .backButton {
   display: inline-flex;
   align-items: center;
-  margin-bottom: 20px;
   color: #2563eb;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
 }
 
+.backLink {
+  margin-top: 20px;
+}
+
+.backButton {
+  margin-bottom: 20px;
+}
+
+.backLink:hover,
 .backButton:hover {
   text-decoration: underline;
 }

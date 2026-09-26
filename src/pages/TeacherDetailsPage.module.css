@@ -1,7 +1,11 @@
 .page {
-  max-width: 1100px;
+  max-width: 1400px;
   margin: 0 auto;
 }
+
+/* =========================
+   Header
+   ========================= */
 
 .header {
   display: flex;
@@ -13,24 +17,46 @@
 
 .title {
   margin: 0 0 6px;
+  color: #172033;
   font-size: 32px;
   font-weight: 700;
-  color: #172554;
 }
 
 .subtitle {
   margin: 0;
-  color: #64748b;
+  color: #667085;
   font-size: 15px;
 }
 
-.card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
+
+/* =========================
+   Main Card
+   ========================= */
+
+.card {
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.05);
+}
+
+.card h2 {
+  margin: 0 0 24px;
+  color: #172033;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+/* =========================
+   Details Grid
+   ========================= */
 
 .detailsGrid {
   display: grid;
@@ -45,64 +71,174 @@
 }
 
 .label {
+  color: #667085;
   font-size: 13px;
   font-weight: 600;
-  color: #64748b;
 }
 
 .value {
+  color: #101828;
   font-size: 16px;
   font-weight: 500;
-  color: #0f172a;
 }
 
-.status {
+/* =========================
+   Status Badges
+   ========================= */
+
+.activeStatus {
   display: inline-flex;
   align-items: center;
   width: fit-content;
-  padding: 5px 10px;
+  padding: 4px 9px;
   border-radius: 999px;
-  background: #dcfce7;
-  color: #166534;
+  background: #ecfdf3;
+  color: #027a48;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inactiveStatus {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #fef3f2;
+  color: #b42318;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* =========================
+   Form Fields
+   ========================= */
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formField label {
+  color: #667085;
   font-size: 13px;
   font-weight: 600;
 }
 
-.error {
-  margin: 16px 0;
-  color: #dc2626;
-  font-size: 14px;
-}
-
-.card h2 {
-  margin: 0 0 24px;
-  font-size: 20px;
-  color: #172554;
-}
-
-.card input {
+.formField input {
   width: 100%;
   height: 42px;
   box-sizing: border-box;
   padding: 0 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d0d5dd;
   border-radius: 8px;
   background: #ffffff;
-  color: #0f172a;
+  color: #101828;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
-.card input:focus {
+.formField input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.header button,
-.card button {
+/* =========================
+   Form Actions
+   ========================= */
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* =========================
+   Buttons
+   ========================= */
+
+.editButton {
   height: 42px;
   padding: 0 16px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #344054;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    opacity 0.2s;
+}
+
+.editButton:hover {
+  background: #f9fafb;
+}
+
+.editButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.deactivateButton {
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid #fecdca;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #b42318;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
+}
+
+.deactivateButton:hover {
+  background: #fee4e2;
+}
+
+.deactivateButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.activateButton {
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid #abefc6;
+  border-radius: 8px;
+  background: #ecfdf3;
+  color: #027a48;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
+}
+
+.activateButton:hover {
+  background: #d1fadf;
+}
+
+.activateButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.saveButton {
+  height: 42px;
+  padding: 0 18px;
   border: none;
   border-radius: 8px;
   background: #2563eb;
@@ -110,32 +246,111 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s, opacity 0.2s;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
 }
 
-.header button:hover,
-.card button:hover {
+.saveButton:hover {
   background: #1d4ed8;
 }
 
-.header button:disabled,
-.card button:disabled {
+.saveButton:disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-.card button[type="button"] {
-  background: #e2e8f0;
-  color: #334155;
+.secondaryButton {
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #344054;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    opacity 0.2s;
 }
 
-.card button[type="button"]:hover {
-  background: #cbd5e1;
+.secondaryButton:hover {
+  background: #f9fafb;
 }
+
+.secondaryButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* =========================
+   Error / Loading
+   ========================= */
+
+.error {
+  margin: 24px 0;
+  color: #b42318;
+  font-size: 14px;
+}
+
+.formError {
+  margin: 18px 0 0;
+  color: #b42318;
+  font-size: 14px;
+}
+
+.loading {
+  margin: 32px 0;
+  text-align: center;
+  color: #667085;
+  font-size: 14px;
+}
+
+/* =========================
+   Back Navigation
+   ========================= */
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 20px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 20px;
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.backButton:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   Responsive
+   ========================= */
 
 @media (max-width: 700px) {
   .header {
     flex-direction: column;
+  }
+
+  .headerActions {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .detailsGrid {
@@ -148,12 +363,21 @@
 }
 
 @media (max-width: 480px) {
-  .card > div:last-child {
+  .headerActions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .card button {
+  .headerActions button {
+    width: 100%;
+  }
+
+  .formActions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .formActions button {
     width: 100%;
   }
 }

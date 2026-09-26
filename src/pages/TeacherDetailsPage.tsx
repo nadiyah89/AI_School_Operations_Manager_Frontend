@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   getTeacherById,
   updateTeacher,
@@ -13,10 +13,12 @@ export default function TeacherDetailsPage() {
   const { id } = useParams<{ id: string }>();
 
   const [teacher, setTeacher] = useState<Teacher | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -41,7 +43,6 @@ export default function TeacherDetailsPage() {
         setError("");
 
         const data = await getTeacherById(Number(id));
-
         setTeacher(data);
       } catch {
         setError("Failed to load teacher.");
@@ -52,6 +53,20 @@ export default function TeacherDetailsPage() {
 
     loadTeacher();
   }, [id]);
+
+  function handleEdit() {
+    if (!teacher) {
+      return;
+    }
+
+    setFirstName(teacher.firstName);
+    setLastName(teacher.lastName);
+    setPhoneNumber(teacher.phoneNumber);
+    setEmail(teacher.email);
+
+    setUpdateError("");
+    setIsEditing(true);
+  }
 
   async function handleUpdateTeacher(
     event: React.FormEvent<HTMLFormElement>
@@ -82,7 +97,7 @@ export default function TeacherDetailsPage() {
     }
   }
 
-  async function handleToggleStatus() {
+  async function handleDeactivate() {
     if (!teacher) {
       return;
     }
@@ -91,17 +106,30 @@ export default function TeacherDetailsPage() {
       setIsTogglingStatus(true);
       setStatusError("");
 
-      const updatedTeacher = teacher.isActive
-        ? await deactivateTeacher(teacher.id)
-        : await activateTeacher(teacher.id);
+      const updatedTeacher = await deactivateTeacher(teacher.id);
 
       setTeacher(updatedTeacher);
     } catch {
-      setStatusError(
-        teacher.isActive
-          ? "Failed to deactivate teacher."
-          : "Failed to activate teacher."
-      );
+      setStatusError("Failed to deactivate teacher.");
+    } finally {
+      setIsTogglingStatus(false);
+    }
+  }
+
+  async function handleActivate() {
+    if (!teacher) {
+      return;
+    }
+
+    try {
+      setIsTogglingStatus(true);
+      setStatusError("");
+
+      const updatedTeacher = await activateTeacher(teacher.id);
+
+      setTeacher(updatedTeacher);
+    } catch {
+      setStatusError("Failed to activate teacher.");
     } finally {
       setIsTogglingStatus(false);
     }
@@ -113,13 +141,14 @@ export default function TeacherDetailsPage() {
         <header className={styles.header}>
           <div>
             <h1 className={styles.title}>Teacher Details</h1>
+
             <p className={styles.subtitle}>
               View teacher information.
             </p>
           </div>
         </header>
 
-        <p>Loading teacher...</p>
+        <p className={styles.loading}>Loading teacher...</p>
       </main>
     );
   }
@@ -130,6 +159,7 @@ export default function TeacherDetailsPage() {
         <header className={styles.header}>
           <div>
             <h1 className={styles.title}>Teacher Details</h1>
+
             <p className={styles.subtitle}>
               View teacher information.
             </p>
@@ -147,6 +177,7 @@ export default function TeacherDetailsPage() {
         <header className={styles.header}>
           <div>
             <h1 className={styles.title}>Teacher Details</h1>
+
             <p className={styles.subtitle}>
               View teacher information.
             </p>
@@ -162,27 +193,49 @@ export default function TeacherDetailsPage() {
     <main className={styles.page}>
       <header className={styles.header}>
         <div>
-          <h1 className={styles.title}>Teacher Details</h1>
+          <h1 className={styles.title}>
+            {teacher.firstName} {teacher.lastName}
+          </h1>
+
           <p className={styles.subtitle}>
-            View teacher information.
+            Teacher details and record management.
           </p>
         </div>
 
-        {!isEditing && (
+        <div className={styles.headerActions}>
           <button
             type="button"
-            onClick={() => {
-              setFirstName(teacher.firstName);
-              setLastName(teacher.lastName);
-              setPhoneNumber(teacher.phoneNumber);
-              setEmail(teacher.email);
-              setUpdateError("");
-              setIsEditing(true);
-            }}
+            className={styles.editButton}
+            onClick={handleEdit}
+            disabled={isTogglingStatus}
           >
             Edit Teacher
           </button>
-        )}
+
+          {teacher.isActive ? (
+            <button
+              type="button"
+              className={styles.deactivateButton}
+              onClick={handleDeactivate}
+              disabled={isTogglingStatus}
+            >
+              {isTogglingStatus
+                ? "Deactivating..."
+                : "Deactivate Teacher"}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={styles.activateButton}
+              onClick={handleActivate}
+              disabled={isTogglingStatus}
+            >
+              {isTogglingStatus
+                ? "Activating..."
+                : "Activate Teacher"}
+            </button>
+          )}
+        </div>
       </header>
 
       {isEditing ? (
@@ -193,15 +246,12 @@ export default function TeacherDetailsPage() {
           <h2>Edit Teacher</h2>
 
           {updateError && (
-            <p className={styles.error}>{updateError}</p>
+            <p className={styles.formError}>{updateError}</p>
           )}
 
           <div className={styles.detailsGrid}>
-            <div className={styles.detail}>
-              <label
-                className={styles.label}
-                htmlFor="firstName"
-              >
+            <div className={styles.formField}>
+              <label htmlFor="firstName">
                 First Name
               </label>
 
@@ -216,11 +266,8 @@ export default function TeacherDetailsPage() {
               />
             </div>
 
-            <div className={styles.detail}>
-              <label
-                className={styles.label}
-                htmlFor="lastName"
-              >
+            <div className={styles.formField}>
+              <label htmlFor="lastName">
                 Last Name
               </label>
 
@@ -235,11 +282,8 @@ export default function TeacherDetailsPage() {
               />
             </div>
 
-            <div className={styles.detail}>
-              <label
-                className={styles.label}
-                htmlFor="phoneNumber"
-              >
+            <div className={styles.formField}>
+              <label htmlFor="phoneNumber">
                 Phone Number
               </label>
 
@@ -254,11 +298,8 @@ export default function TeacherDetailsPage() {
               />
             </div>
 
-            <div className={styles.detail}>
-              <label
-                className={styles.label}
-                htmlFor="email"
-              >
+            <div className={styles.formField}>
+              <label htmlFor="email">
                 Email
               </label>
 
@@ -274,16 +315,10 @@ export default function TeacherDetailsPage() {
             </div>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isUpdating}
-            >
-              {isUpdating ? "Saving..." : "Save Changes"}
-            </button>
-
+          <div className={styles.formActions}>
             <button
               type="button"
+              className={styles.secondaryButton}
               onClick={() => {
                 setIsEditing(false);
                 setUpdateError("");
@@ -292,78 +327,99 @@ export default function TeacherDetailsPage() {
             >
               Cancel
             </button>
+
+            <button
+              type="submit"
+              className={styles.saveButton}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Saving..." : "Save Changes"}
+            </button>
           </div>
         </form>
       ) : (
-        <section className={styles.card}>
-          <div className={styles.detailsGrid}>
-            <div className={styles.detail}>
-              <span className={styles.label}>ID</span>
-              <span className={styles.value}>
-                {teacher.id}
-              </span>
+        <>
+          <section className={styles.card}>
+            <div className={styles.detailsGrid}>
+              <div className={styles.detail}>
+                <span className={styles.label}>ID</span>
+
+                <span className={styles.value}>
+                  {teacher.id}
+                </span>
+              </div>
+
+              <div className={styles.detail}>
+                <span className={styles.label}>Status</span>
+
+                <span
+                  className={
+                    teacher.isActive
+                      ? styles.activeStatus
+                      : styles.inactiveStatus
+                  }
+                >
+                  {teacher.isActive
+                    ? "Active"
+                    : "Inactive"}
+                </span>
+              </div>
+
+              <div className={styles.detail}>
+                <span className={styles.label}>
+                  First Name
+                </span>
+
+                <span className={styles.value}>
+                  {teacher.firstName}
+                </span>
+              </div>
+
+              <div className={styles.detail}>
+                <span className={styles.label}>
+                  Last Name
+                </span>
+
+                <span className={styles.value}>
+                  {teacher.lastName}
+                </span>
+              </div>
+
+              <div className={styles.detail}>
+                <span className={styles.label}>
+                  Phone Number
+                </span>
+
+                <span className={styles.value}>
+                  {teacher.phoneNumber}
+                </span>
+              </div>
+
+              <div className={styles.detail}>
+                <span className={styles.label}>
+                  Email
+                </span>
+
+                <span className={styles.value}>
+                  {teacher.email}
+                </span>
+              </div>
             </div>
 
-            <div className={styles.detail}>
-              <span className={styles.label}>Status</span>
-              <span className={styles.status}>
-                {teacher.isActive ? "Active" : "Inactive"}
-              </span>
-            </div>
+            {statusError && (
+              <p className={styles.error}>
+                {statusError}
+              </p>
+            )}
+          </section>
 
-            <div className={styles.detail}>
-              <span className={styles.label}>
-                First Name
-              </span>
-              <span className={styles.value}>
-                {teacher.firstName}
-              </span>
-            </div>
-
-            <div className={styles.detail}>
-              <span className={styles.label}>
-                Last Name
-              </span>
-              <span className={styles.value}>
-                {teacher.lastName}
-              </span>
-            </div>
-
-            <div className={styles.detail}>
-              <span className={styles.label}>
-                Phone Number
-              </span>
-              <span className={styles.value}>
-                {teacher.phoneNumber}
-              </span>
-            </div>
-
-            <div className={styles.detail}>
-              <span className={styles.label}>Email</span>
-              <span className={styles.value}>
-                {teacher.email}
-              </span>
-            </div>
-          </div>
-
-          {statusError && (
-            <p className={styles.error}>{statusError}</p>
-          )}
-
-          <div>
-            <button
-              type="button"
-              onClick={handleToggleStatus}
-              disabled={isTogglingStatus}
-            >
-              {isTogglingStatus
-                ? "Updating..."
-                : teacher.isActive
-                  ? "Deactivate Teacher"
-                  : "Activate Teacher"}
-            </button>
-          </div>
-        </section>
+          <Link
+            to="/directory/teachers"
+            className={styles.backLink}
+          >
+            ← Back to Teachers
+          </Link>
+        </>
       )}
     </main>
   );

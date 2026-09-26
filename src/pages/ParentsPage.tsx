@@ -423,17 +423,13 @@ export default function ParentsPage() {
         </p>
       )}
 
-      {!loading &&
-        !error &&
-        parents.length === 0 && (
-          <div className={styles.emptyState}>
-            <h2>No parents found</h2>
-
-            <p>
-              Try changing your search or filter.
-            </p>
-          </div>
-        )}
+     {!loading &&
+  !error &&
+  parents.length === 0 && (
+    <p className={styles.empty}>
+      No parents found.
+    </p>
+  )}
 
       {!loading &&
         !error &&

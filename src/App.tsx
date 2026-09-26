@@ -1,112 +1,143 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./layouts/AppLayout";
+
 import StudentsPage from "./pages/StudentsPage";
 import TeachersPage from "./pages/TeachersPage";
 import ParentsPage from "./pages/ParentsPage";
+
 import AcademicPerformancePage from "./pages/AcademicPerformancePage";
+
 import AttendancePage from "./pages/AttendancePage";
 import MeetingsPage from "./pages/MeetingsPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import NotificationsPage from "./pages/NotificationsPage";
+
 import AdmissionsPage from "./pages/AdmissionsPage";
 import FeesPage from "./pages/FeesPage";
+
 import AIAssistantPage from "./pages/AIAssistantPage";
+
 import StudentDetailsPage from "./pages/StudentDetailsPage";
 import TeacherDetailsPage from "./pages/TeacherDetailsPage";
 import ParentDetailsPage from "./pages/ParentDetailsPage";
+import AcademicPerformanceDetailsPage from "./pages/AcademicPerformanceDetailsPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
 
+        {/* Protected application routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-             <Route
-             path="/directory/students"
-             element={<StudentsPage />}
-             />
 
-             <Route
-              path="/directory/students/:id"
-              element={<StudentDetailsPage />}
-             />
+            {/* Dashboard */}
+            <Route
+              path="/dashboard"
+              element={<DashboardPage />}
+            />
 
-
-             <Route
-             path="/directory/teachers"
-             element={<TeachersPage />}
+            {/* Directory - Students */}
+            <Route
+              path="/directory/students"
+              element={<StudentsPage />}
             />
 
             <Route
-             path="/directory/parents"
-             element={<ParentsPage />}
-             />
+              path="/directory/students/:id"
+              element={<StudentDetailsPage />}
+            />
 
-             <Route
+            {/* Directory - Teachers */}
+            <Route
+              path="/directory/teachers"
+              element={<TeachersPage />}
+            />
+
+            <Route
+              path="/directory/teachers/:id"
+              element={<TeacherDetailsPage />}
+            />
+
+            {/* Directory - Parents */}
+            <Route
+              path="/directory/parents"
+              element={<ParentsPage />}
+            />
+
+            <Route
+              path="/directory/parents/:id"
+              element={<ParentDetailsPage />}
+            />
+
+            {/* Academics - Academic Performance */}
+            <Route
               path="/academics/performance"
-             element={<AcademicPerformancePage />}
-             />
+              element={<AcademicPerformancePage />}
+            />
 
-             <Route
+            <Route
+              path="/academics/performance/:id"
+              element={<AcademicPerformanceDetailsPage />}
+            />
+
+            {/* Operations - Attendance */}
+            <Route
               path="/operations/attendance"
               element={<AttendancePage />}
-             />
+            />
 
-             <Route
-               path="/operations/meetings"
-                element={<MeetingsPage />}
-              />
+            {/* Operations - Meetings */}
+            <Route
+              path="/operations/meetings"
+              element={<MeetingsPage />}
+            />
 
-              <Route
-               path="/operations/documents"
-               element={<DocumentsPage />}
-               />
-               
-               <Route
-               path="/operations/notifications"
-               element={<NotificationsPage />}
-                />
+            {/* Operations - Documents */}
+            <Route
+              path="/operations/documents"
+              element={<DocumentsPage />}
+            />
 
-              <Route
-                  path="/administration/admissions"
-                  element={<AdmissionsPage />}
-                />
+            {/* Operations - Notifications */}
+            <Route
+              path="/operations/notifications"
+              element={<NotificationsPage />}
+            />
 
-                <Route
-                path="/administration/fees"
-                  element={<FeesPage />}
-                 />
+            {/* Administration - Admissions */}
+            <Route
+              path="/administration/admissions"
+              element={<AdmissionsPage />}
+            />
 
-                 <Route
-                  path="/ai"
-                 element={<AIAssistantPage />}
-                 />
+            {/* Administration - Fees */}
+            <Route
+              path="/administration/fees"
+              element={<FeesPage />}
+            />
 
-                 <Route
-                  path="/directory/teachers"
-                  element={<TeachersPage />}
-                 />
+            {/* AI Assistant */}
+            <Route
+              path="/ai"
+              element={<AIAssistantPage />}
+            />
 
-                 <Route
-                  path="/directory/teachers/:id"
-                  element={<TeacherDetailsPage />}
-                  />
+          </Route>
+        </Route>
 
-                  <Route
-                  path="/directory/parents/:id"
-                  element={<ParentDetailsPage />}
-                  />
-
-         </Route>
-       </Route>
-
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Unknown routes */}
+        <Route
+          path="*"
+          element={<Navigate to="/login" replace />}
+        />
       </Routes>
     </BrowserRouter>
   );
