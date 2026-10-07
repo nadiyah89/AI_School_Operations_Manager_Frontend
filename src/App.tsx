@@ -25,6 +25,7 @@ import AcademicPerformanceDetailsPage from "./pages/AcademicPerformanceDetailsPa
 import AttendanceDetailsPage from "./pages/AttendanceDetailsPage";
 import MeetingDetailsPage from "./pages/MeetingDetailsPage";
 import DocumentDetailsPage from "./pages/DocumentDetailsPage";
+import NotificationDetailsPage from "./pages/NotificationDetailsPage";
 
 function App() {
   return (
@@ -124,6 +125,11 @@ function App() {
             <Route
               path="/operations/notifications"
               element={<NotificationsPage />}
+            />
+
+            <Route
+            path="/operations/notifications/:id"
+            element={<NotificationDetailsPage />}
             />
 
             {/* Administration - Admissions */}
