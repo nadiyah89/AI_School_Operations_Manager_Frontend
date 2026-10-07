@@ -24,6 +24,7 @@ import ParentDetailsPage from "./pages/ParentDetailsPage";
 import AcademicPerformanceDetailsPage from "./pages/AcademicPerformanceDetailsPage";
 import AttendanceDetailsPage from "./pages/AttendanceDetailsPage";
 import MeetingDetailsPage from "./pages/MeetingDetailsPage";
+import DocumentDetailsPage from "./pages/DocumentDetailsPage";
 
 function App() {
   return (
@@ -112,6 +113,11 @@ function App() {
             <Route
               path="/operations/documents"
               element={<DocumentsPage />}
+            />
+
+            <Route
+            path="/operations/documents/:id"
+              element={<DocumentDetailsPage />}
             />
 
             {/* Operations - Notifications */}
