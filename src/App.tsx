@@ -11,21 +11,18 @@ import TeachersPage from "./pages/TeachersPage";
 import ParentsPage from "./pages/ParentsPage";
 
 import AcademicPerformancePage from "./pages/AcademicPerformancePage";
-
 import AttendancePage from "./pages/AttendancePage";
 import MeetingsPage from "./pages/MeetingsPage";
 import DocumentsPage from "./pages/DocumentsPage";
 import NotificationsPage from "./pages/NotificationsPage";
-
 import AdmissionsPage from "./pages/AdmissionsPage";
 import FeesPage from "./pages/FeesPage";
-
 import AIAssistantPage from "./pages/AIAssistantPage";
-
 import StudentDetailsPage from "./pages/StudentDetailsPage";
 import TeacherDetailsPage from "./pages/TeacherDetailsPage";
 import ParentDetailsPage from "./pages/ParentDetailsPage";
 import AcademicPerformanceDetailsPage from "./pages/AcademicPerformanceDetailsPage";
+import AttendanceDetailsPage from "./pages/AttendanceDetailsPage";
 
 function App() {
   return (
@@ -93,6 +90,11 @@ function App() {
               path="/operations/attendance"
               element={<AttendancePage />}
             />
+
+            <Route
+             path="/operations/attendance/:id"
+             element={<AttendanceDetailsPage />}
+             />
 
             {/* Operations - Meetings */}
             <Route
