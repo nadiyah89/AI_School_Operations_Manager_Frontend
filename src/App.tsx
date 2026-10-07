@@ -27,6 +27,7 @@ import MeetingDetailsPage from "./pages/MeetingDetailsPage";
 import DocumentDetailsPage from "./pages/DocumentDetailsPage";
 import NotificationDetailsPage from "./pages/NotificationDetailsPage";
 import AdmissionDetailsPage from "./pages/AdmissionDetailsPage";
+import FeeDetailsPage from "./pages/FeeDetailsPage";
 
 function App() {
   return (
@@ -148,6 +149,11 @@ function App() {
             <Route
               path="/administration/fees"
               element={<FeesPage />}
+            />
+
+            <Route
+            path="/administration/fees/:id"
+             element={<FeeDetailsPage />}
             />
 
             {/* AI Assistant */}
