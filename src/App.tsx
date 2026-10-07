@@ -26,6 +26,7 @@ import AttendanceDetailsPage from "./pages/AttendanceDetailsPage";
 import MeetingDetailsPage from "./pages/MeetingDetailsPage";
 import DocumentDetailsPage from "./pages/DocumentDetailsPage";
 import NotificationDetailsPage from "./pages/NotificationDetailsPage";
+import AdmissionDetailsPage from "./pages/AdmissionDetailsPage";
 
 function App() {
   return (
@@ -137,6 +138,11 @@ function App() {
               path="/administration/admissions"
               element={<AdmissionsPage />}
             />
+
+            <Route
+             path="/administration/admissions/:id"
+             element={<AdmissionDetailsPage />}
+             />
 
             {/* Administration - Fees */}
             <Route
