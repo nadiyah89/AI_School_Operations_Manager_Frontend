@@ -23,6 +23,7 @@ import TeacherDetailsPage from "./pages/TeacherDetailsPage";
 import ParentDetailsPage from "./pages/ParentDetailsPage";
 import AcademicPerformanceDetailsPage from "./pages/AcademicPerformanceDetailsPage";
 import AttendanceDetailsPage from "./pages/AttendanceDetailsPage";
+import MeetingDetailsPage from "./pages/MeetingDetailsPage";
 
 function App() {
   return (
@@ -101,6 +102,11 @@ function App() {
               path="/operations/meetings"
               element={<MeetingsPage />}
             />
+
+            <Route
+              path="/operations/meetings/:id"
+              element={<MeetingDetailsPage />}
+               />
 
             {/* Operations - Documents */}
             <Route
